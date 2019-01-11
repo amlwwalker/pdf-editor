@@ -1,0 +1,24 @@
+#osx file
+.DS_Store
+
+#directories
+deploy/
+
+#file extensions
+*.o
+*.qmlc
+*.cpp
+*.h
+*.qrc
+
+#file prefixes
+moc*.*
+rcc*.*
+
+#packr files
+*-packr.go
+*cgo*
+
+#binary files
+./got-qt
+./cuiinterface/cuiinterface

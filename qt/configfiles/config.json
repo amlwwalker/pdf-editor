@@ -1,0 +1,12 @@
+{
+    "hotload": true,
+    "host": "",
+    "port": "",
+    "mode": "deploy",
+    "version": "0.1",
+    "author": "Alex Walker",
+    "path": "/Users/alex/",
+    "verbose": true,
+    "loadFrom": "~/",
+    "date": "02-04-2018"
+}
