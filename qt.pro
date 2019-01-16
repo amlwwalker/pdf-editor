@@ -1,0 +1,1 @@
+QT += core multimedia dbus widgets gui quick core gui

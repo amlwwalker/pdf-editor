@@ -7,9 +7,9 @@
 	<key>CFBundleIconFile</key>
 	<string>icons.icns</string>
 	<key>CFBundleDisplayName</key>
-	<string>Got-Qt</string>
+	<string>PDF-Editor</string>
 	<key>CFBundleName</key>
-	<string>Got-Qt</string>
+	<string>PDF-Editor</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>

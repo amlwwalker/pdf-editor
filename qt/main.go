@@ -2,8 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
-	"log/syslog"
 	"os"
 
 	"github.com/gobuffalo/packr" //for compiled files
@@ -36,14 +34,9 @@ func LoadConfiguration() (error, Config) {
 }
 func main() {
 
-	logwriter, e := syslog.New(syslog.LOG_NOTICE, "pdf-edito")
-	if e == nil {
-		log.SetOutput(logwriter)
-	}
-	log.Print("Hello Logs!")
 	//0. set any required env vars for qt
-	os.Setenv("QT_QUICK_CONTROLS_STYLE", "material") //set style to material
-	os.Setenv("QML_DISABLE_DISK_CACHE", "true")      //disable caching files
+	// os.Setenv("QT_QUICK_CONTROLS_STYLE", "material") //set style to material
+	os.Setenv("QML_DISABLE_DISK_CACHE", "true") //disable caching files
 
 	//1. the hotloader needs a path to the qml files highest directory
 	// change this if you are working elsewhere
@@ -58,12 +51,13 @@ func main() {
 	// turn on high definition scaling
 	core.QCoreApplication_SetAttribute(core.Qt__AA_EnableHighDpiScaling, true)
 
+	// quick.QQuickWindow_SetSceneGraphBackend(quick.QSGRendererInterface__Software)
 	//4. Configure the qml binding and create an application
 	widgets.NewQApplication(len(os.Args), os.Args)
 
 	//create a view
 	var view = quick.NewQQuickView(nil)
-	view.SetTitle("got-qt")
+	view.SetTitle("PDF-Editor")
 	// qmlBridge.OpenWithDefaultApplication() //try and open a default directory
 	//configure the view to know about the bridge
 	//this needs to happen before anything happens on another thread
@@ -72,12 +66,13 @@ func main() {
 	view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
 	// view.RootContext().SetContextProperty("ContactsModel", qmlBridge.business.pModel)
 	// view.RootContext().SetContextProperty("SearchModel", qmlBridge.business.sModel)
-	// view.RootContext().SetContextProperty("FilesModel", qmlBridge.business.fModel)
+	view.RootContext().SetContextProperty("FilesModel", qmlBridge.business.fModel)
+	view.RootContext().SetContextProperty("ImageFilesModel", qmlBridge.business.iModel)
 
 	//5. Configure hotloading
 	//configure the loader to handle updating qml live
 	// loader := func(p string) {
-	// 	fmt.Println("changed:", p)
+	// 	log.Println("changed:", p)
 	// 	view.SetSource(core.NewQUrl())
 	// 	view.Engine().ClearComponentCache()
 	// 	view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
@@ -89,15 +84,15 @@ func main() {
 	// var notifier NotificationHandler
 	// notifier.Initialise()
 	// //decide whether to enable hotloading (must be disabled for deployment)
-	// config.Hotload = true
+	// config.Hotload = false
 	// if !config.Hotload {
-	// 	fmt.Println("compiling qml into binary...")
-	view.SetSource(core.NewQUrl3("qrc:/qml/loader-production.qml", 0))
-	// 	notifier.Push("Hotloading", "Disabled")
+	// log.Println("compiling qml into binary...")
+	view.SetSource(core.NewQUrl3("qrc:///qml/loader-production.qml", 0))
+	// notifier.Push("Hotloading", "Disabled")
 	// } else {
 	// 	view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
-	// go qmlBridge.hotLoader.startWatcher(loader)
-	// 	notifier.Push("Hotloading", "Enabled")
+	// 	go qmlBridge.hotLoader.startWatcher(loader)
+	// 	// notifier.Push("Hotloading", "Enabled")
 	// }
 	// view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
 	// notifier.Push("Running", "Smooth")
