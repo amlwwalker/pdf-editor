@@ -87,7 +87,7 @@ func main() {
 	// config.Hotload = false
 	// if !config.Hotload {
 	// log.Println("compiling qml into binary...")
-	view.SetSource(core.NewQUrl3("qrc:///qml/loader-production.qml", 0))
+	view.SetSource(core.NewQUrl3("qrc:/qml/loader-production.qml", 0))
 	// notifier.Push("Hotloading", "Disabled")
 	// } else {
 	// 	view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
