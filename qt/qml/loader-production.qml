@@ -1,7 +1,9 @@
 import QtQuick 2.6
 import QtQuick.Layouts 1.3
-import QtQuick.Controls 1.4
+// import QtQuick.Controls 1.4
 import QtQuick.Controls 2.4
+// import QtQuick.Controls 1.4 as QQC1
+// import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls.Material 2.0
 import QtQuick.Controls.Universal 2.0
 import Qt.labs.settings 1.0
@@ -36,7 +38,7 @@ Item {
 	                    fillMode: Image.Pad
 	                    horizontalAlignment: Image.AlignHCenter
 	                    verticalAlignment: Image.AlignVCenter
-	                    source: "images/FA/white/png/22/wrench.png"
+	                    source: "images/FA/black/png/22/wrench.png"
 	                }
 	                onClicked: {
                         setWorkingDirectory.open()
@@ -47,7 +49,7 @@ Item {
 	                    fillMode: Image.Pad
 	                    horizontalAlignment: Image.AlignHCenter
 	                    verticalAlignment: Image.AlignVCenter
-	                    source: "images/FA/white/png/22/file-pdf-o.png"
+	                    source: "images/FA/black/png/22/file-pdf-o.png"
 	                }
 	                onClicked: {
                         drawer.open()
@@ -59,14 +61,14 @@ Item {
                         fillMode: Image.Pad
                         horizontalAlignment: Image.AlignHCenter
                         verticalAlignment: Image.AlignVCenter
-                        source: "images/FA/white/png/22/paint-brush.png"
+                        source: "images/FA/black/png/22/paint-brush.png"
                     }
                     onClicked: {
                         painting = !painting
                         if (painting) {
-                            paintButton.source = "images/FA/black/png/22/paint-brush.png"
-                        } else {
                             paintButton.source = "images/FA/white/png/22/paint-brush.png"
+                        } else {
+                            paintButton.source = "images/FA/black/png/22/paint-brush.png"
                         }
                     }
                 }
@@ -75,7 +77,7 @@ Item {
                         fillMode: Image.Pad
                         horizontalAlignment: Image.AlignHCenter
                         verticalAlignment: Image.AlignVCenter
-                        source: "images/FA/white/png/22/plus.png"
+                        source: "images/FA/black/png/22/plus.png"
                     }
                     onClicked: {
                     brushSize += 5
@@ -86,7 +88,7 @@ Item {
                             fillMode: Image.Pad
                             horizontalAlignment: Image.AlignHCenter
                             verticalAlignment: Image.AlignVCenter
-                            source: "images/FA/white/png/22/minus.png"
+                            source: "images/FA/black/png/22/minus.png"
                     }
                     onClicked: {
                     brushSize -= 5
@@ -154,11 +156,11 @@ Item {
                         fillMode: Image.Pad
                         horizontalAlignment: Image.AlignHCenter
                         verticalAlignment: Image.AlignVCenter
-                        source: "images/FA/white/png/22/eraser.png"
+                        source: "images/FA/black/png/22/eraser.png"
                     }
                     onClicked: {
                         painting = false
-                        paintButton.source = "images/FA/white/png/22/paint-brush.png"
+                        paintButton.source = "images/FA/black/png/22/paint-brush.png"
                         myCanvas.clear()
                     }
                 }
@@ -168,21 +170,24 @@ Item {
                         fillMode: Image.Pad
                         horizontalAlignment: Image.AlignHCenter
                         verticalAlignment: Image.AlignVCenter
-                        source: "images/FA/white/png/22/save.png"
+                        source: "images/FA/black/png/22/save.png"
                     }
                     onClicked: {
                         painting = false
-                        paintButton.source = "images/FA/white/png/22/paint-brush.png"
+                        paintButton.source = "images/FA/black/png/22/paint-brush.png"
                 // var urlNoProtocol = (fileSaveDialog.fileUrl+"").replace('file://', '');
                     //source.grabToImage(function(result) {
                     //result.saveToFile("file:///Users/alex/ML-MT-PH-00005.000_REV1A.edited.000.walker.png");
+                    if (currentlySelectedFilePath == "" || currentlySelectedFileName == "") {
+                        return false
+                    }
                     source.grabToImage(function(result){
-                        console.log("image: ", result.image)
+                        logger.text += "\r\n" + "image: ", result.image
                         QmlBridge.saveEditedFile(currentlySelectedFilePath, currentlySelectedFileName, errorType.text, result.image)
                     // if (!result.saveToFile(urlNoProtocol)){
                     //     console.error('Unknown error saving to',urlNoProtocol);
                     // } else {
-                    //     console.log("saved to " + urlNoProtocol)
+                    //     logger.text += "\r\n" + "saved to " + urlNoProtocol
                     // }
                     
                 })
@@ -203,7 +208,7 @@ Item {
 	                    fillMode: Image.Pad
 	                    horizontalAlignment: Image.AlignHCenter
 	                    verticalAlignment: Image.AlignVCenter
-	                    source: "images/FA/white/png/22/image.png"
+	                    source: "images/FA/black/png/22/image.png"
 	                }
 	                onClicked: {
 
@@ -244,16 +249,16 @@ Item {
             id: setWorkingDirectory
             selectFolder: true
             onAccepted: {
-                console.log("User chose directory: " + setWorkingDirectory.folder)
+                logger.text += "\r\n" + "User chose directory: " + setWorkingDirectory.folder
                 QmlBridge.setWorkingDirectory(setWorkingDirectory.folder)
             }
         }
     //menu
     Drawer {
         id: drawer
-        width: Math.min(window.width, window.height) / 3 * 2
+        width: 200 //Math.min(window.width, window.height) / 3 * 2
         height: window.height
-
+        edge: Qt.RightEdge
         ListView {
             id: listView
             currentIndex: -1
@@ -267,7 +272,7 @@ Item {
                     if (listView.currentIndex != index) {
                         listView.currentIndex = index
                         titleLabel.text = model.filePath
-                        console.log("img source " + img.source)
+                        logger.text += "\r\n" + "img source " + model.filePath
                         QmlBridge.openFile(model.filePath)
                     }
                     drawer.close()
@@ -298,7 +303,7 @@ Item {
                         titleLabel.text = model.fileName
                         currentlySelectedFilePath = model.filePath
                         currentlySelectedFileName = model.fileName
-                        console.log("img source " + model.filePath  + "/" + model.fileName)
+                        logger.text += "\r\n" + "img source " + model.filePath  + "/" + model.fileName
                         // QmlBridge.openFile(model.filePath)
                         img.source = "file:///" + model.filePath + "/" + model.fileName
                         myCanvas.requestPaint()
@@ -316,7 +321,7 @@ Item {
     ScrollView {
             anchors.left: parent.left
             anchors.top: subToolBar.bottom
-            anchors.bottom: parent.bottom
+            anchors.bottom: logger.top
             anchors.right: parent.right
             clip: true
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
@@ -352,7 +357,7 @@ Item {
                         var ctx = getContext("2d");
                         ctx.reset();
                         myCanvas.requestPaint();
-                        console.log("painting: " + painting)
+                        logger.text += "\r\n" + "painting: " + painting
                     }
                     // onPaint: {
                     //     var ctx = getContext('2d');
@@ -414,11 +419,27 @@ Item {
             //     //process complete
             //     progressIndicator.visible = false
             // }
-            console.log(p)
+            logger.text += "\r\n" + p
             img.source = "file://" + p
             myCanvas.requestPaint()
             flickableCanvas.contentWidth = img.width
             flickableCanvas.contentHeight = img.height
         }
+        onSendMessage: {
+            logger.text +="\r\n" + data
+        }
     }
+    ScrollView {
+        id: loggerView
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: subToolBar.bottom
+        anchors.bottom: parent.bottom   
+        // height: 200
+        TextArea {
+            id: logger
+            text: "logging area"
+        }
+    }
+    
 }

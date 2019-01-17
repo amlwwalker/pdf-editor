@@ -34,6 +34,9 @@ func LoadConfiguration() (error, Config) {
 }
 func main() {
 
+	core.QCoreApplication_SetOrganizationName("OrganizationName")                 //needed to fix an QML Settings issue on windows
+	quick.QQuickWindow_SetSceneGraphBackend(quick.QSGRendererInterface__Software) //needed to get the application working on VMs when using the windows docker images
+
 	//0. set any required env vars for qt
 	// os.Setenv("QT_QUICK_CONTROLS_STYLE", "material") //set style to material
 	os.Setenv("QML_DISABLE_DISK_CACHE", "true") //disable caching files
