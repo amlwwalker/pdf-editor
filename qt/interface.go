@@ -110,6 +110,8 @@ func (q *QmlBridge) ConfigureBridge(config Config) {
 		// ba := imageFile.ReadAll()
 		// fmt.Println("printing data ")
 		// fmt.Println(ba.Data)
+		errorType = strings.Replace(strings.ToUpper(errorType), " ", "_", -1)
+
 		buff := core.NewQBuffer(q)
 		buff.Open(core.QIODevice__ReadWrite)
 		ok := imageFile.Save2(buff, "PNG", -1)
@@ -127,7 +129,8 @@ func (q *QmlBridge) ConfigureBridge(config Config) {
 			errorType = "NONE"
 		}
 		fileName = strings.Replace(fileName, ".orig.", "."+errorType+".", -1)
-		if err := ioutil.WriteFile(filepath.Join(path, fileName), []byte(data), 0644); err != nil {
+		errorTypeDirectory, _ := CreateDirIfNotExist(filepath.Join(path, errorType))
+		if err := ioutil.WriteFile(filepath.Join(errorTypeDirectory, fileName), []byte(data), 0644); err != nil {
 			fmt.Println("error writing to file " + err.Error())
 		}
 
