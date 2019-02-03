@@ -2,7 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/gobuffalo/packr" //for compiled files
 	"github.com/therecipe/qt/core"
@@ -43,7 +46,7 @@ func main() {
 
 	//1. the hotloader needs a path to the qml files highest directory
 	// change this if you are working elsewhere
-	// var topLevel = filepath.Join(os.Getenv("GOPATH"), "src", "github.com", "amlwwalker", "pdf-editor", "qt", "qml")
+	var topLevel = filepath.Join(os.Getenv("GOPATH"), "src", "github.com", "amlwwalker", "pdf-editor", "qt", "qml")
 
 	//2. load the configuration file
 	// _, config := LoadConfiguration()
@@ -73,30 +76,30 @@ func main() {
 	view.RootContext().SetContextProperty("ImageFilesModel", qmlBridge.business.iModel)
 
 	//5. Configure hotloading
-	//configure the loader to handle updating qml live
-	// loader := func(p string) {
-	// 	log.Println("changed:", p)
-	// 	view.SetSource(core.NewQUrl())
-	// 	view.Engine().ClearComponentCache()
-	// 	view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
-	// 	if !strings.Contains(p, "/loader.qml") {
-	// 		relativePath := strings.Replace(p, topLevel+"/", "", -1)
-	// 		qmlBridge.UpdateLoader(relativePath)
-	// 	}
-	// }
+	// configure the loader to handle updating qml live
+	loader := func(p string) {
+		log.Println("changed:", p)
+		view.SetSource(core.NewQUrl())
+		view.Engine().ClearComponentCache()
+		view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
+		if !strings.Contains(p, "/loader.qml") {
+			relativePath := strings.Replace(p, topLevel+"/", "", -1)
+			qmlBridge.UpdateLoader(relativePath)
+		}
+	}
 	// var notifier NotificationHandler
 	// notifier.Initialise()
 	// //decide whether to enable hotloading (must be disabled for deployment)
-	// config.Hotload = false
-	// if !config.Hotload {
-	// log.Println("compiling qml into binary...")
-	view.SetSource(core.NewQUrl3("qrc:/qml/loader-production.qml", 0))
-	// notifier.Push("Hotloading", "Disabled")
-	// } else {
-	// 	view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
-	// 	go qmlBridge.hotLoader.startWatcher(loader)
-	// 	// notifier.Push("Hotloading", "Enabled")
-	// }
+	config.Hotload = false
+	if !config.Hotload {
+		log.Println("compiling qml into binary...")
+		view.SetSource(core.NewQUrl3("qrc:/qml/loader-production.qml", 0))
+		// notifier.Push("Hotloading", "Disabled")
+	} else {
+		view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
+		go qmlBridge.hotLoader.startWatcher(loader)
+		// notifier.Push("Hotloading", "Enabled")
+	}
 	// view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
 	// notifier.Push("Running", "Smooth")
 	//6. Complete setup, and start the UI

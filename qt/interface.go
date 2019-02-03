@@ -10,8 +10,6 @@ import (
 	"strconv"
 	"strings"
 
-	"time"
-
 	"github.com/amlwwalker/pdf-editor/utils"
 	fitz "github.com/gen2brain/go-fitz"
 	"github.com/therecipe/qt/core"
@@ -58,6 +56,7 @@ func (q *QmlBridge) ConfigureBridge(config Config) {
 	q.ConnectOpenFile(func(path string) {
 		fmt.Println("opening " + path)
 		q.SendMessage("requested to open " + path)
+		q.business.iModel.clearFiles()
 		path, imageFiles := q.openFileForProcessing(path)
 
 		q.business.iModel.ClearFiles()
@@ -150,20 +149,16 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 	//most don''t need the pdf ext
 	origDirPath := ABSOLUTE_PATH_URL
 	subject := strings.Replace(filePath, ".pdf", "", -1)
-	go q.SendMessage("requested to open subject " + subject + " THEN PAUSING")
 	var imageFiles []string
-	time.Sleep(4 * time.Millisecond)
-	go q.SendMessage("and.... getting ready to read the directory " + filepath.Join(origDirPath, subject) + ".pdf")
-	return "", imageFiles
+	q.SendMessage("and.... getting ready to read the directory " + filepath.Join(origDirPath, subject) + ".pdf")
 	doc, err := fitz.New(filepath.Join(origDirPath, subject) + ".pdf")
 	if err != nil {
 		q.SendMessage("fitz error " + err.Error())
 	}
-	go q.SendMessage("and.... getting ready to read the directory " + origDirPath + "/" + subject)
-	return "", imageFiles
+	q.SendMessage("and.... getting ready to read the directory " + origDirPath + "/" + subject)
 	//location of original
 	defer doc.Close()
-	go q.SendMessage("OK, reading directory " + origDirPath + "/" + subject)
+	q.SendMessage("OK, reading directory " + origDirPath + "/" + subject)
 	dirName, _ := CreateDirIfNotExist(filepath.Join(origDirPath, subject))
 	// if creError != nil {
 	// 	q.SendMessage("creError: " + creError.Error())
@@ -176,15 +171,11 @@ func (q *QmlBridge) openFileForProcessing(filePath string) (string, []string) {
 	// 	return "", []string
 	// }
 	// Extract pages as images
-	go q.SendMessage("OK, extracting information. Pause ")
-	time.Sleep(2 * time.Millisecond)
 	for n := 0; n < doc.NumPage(); n++ {
 		img, err := doc.Image(n)
 		if err != nil {
 			q.SendMessage("CreateDirIfNotExist error" + err.Error())
 		}
-		go q.SendMessage("OK, creating png at " + filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)) + "Pause ")
-		time.Sleep(2 * time.Millisecond)
 		f, err := os.Create(filepath.Join(originalDir, fmt.Sprintf(subject+".orig.%03d.png", n)))
 		if err != nil {
 			q.SendMessage("create image error " + err.Error())

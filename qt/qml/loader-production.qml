@@ -182,12 +182,13 @@ Item {
                         return false
                     }
                     source.grabToImage(function(result){
-                        logger.text += "\r\n" + "image: ", result.image
+                        console.log("saving to image " + currentlySelectedFileName)
+                        // logger.text += "\r\n" + "image: ", result.image
                         QmlBridge.saveEditedFile(currentlySelectedFilePath, currentlySelectedFileName, errorType.text, result.image)
                     // if (!result.saveToFile(urlNoProtocol)){
                     //     console.error('Unknown error saving to',urlNoProtocol);
                     // } else {
-                    //     logger.text += "\r\n" + "saved to " + urlNoProtocol
+                        // logger.text += "\r\n" + "saved to " + urlNoProtocol
                     // }
                     
                 })
@@ -243,22 +244,31 @@ Item {
                         }
                     }
 	            }
+                Label {
+                    id: imageTitleLabel
+                    text: ""
+                    font.pixelSize: 20
+                    elide: Label.ElideRight
+                    horizontalAlignment: Qt.AlignHCenter
+                    verticalAlignment: Qt.AlignVCenter
+                    Layout.fillWidth: true
+                }
             }
         }
         FileDialog {
             id: setWorkingDirectory
             selectFolder: true
             onAccepted: {
-                logger.text += "\r\n" + "User chose directory: " + setWorkingDirectory.folder
+                // logger.text += "\r\n" + "User chose directory: " + setWorkingDirectory.folder
                 QmlBridge.setWorkingDirectory(setWorkingDirectory.folder)
             }
         }
     //menu
     Drawer {
         id: drawer
-        width: 200 //Math.min(window.width, window.height) / 3 * 2
+        width: Math.min(window.width, window.height) / 3 * 2
         height: window.height
-        edge: Qt.RightEdge
+        edge: Qt.LeftEdge
         ListView {
             id: listView
             currentIndex: -1
@@ -272,7 +282,8 @@ Item {
                     if (listView.currentIndex != index) {
                         listView.currentIndex = index
                         titleLabel.text = model.filePath
-                        logger.text += "\r\n" + "img source " + model.filePath
+                        //we need to set the drawer indexes back to -1 whenever a new pdf is chosen
+                        listViewRight.currentIndex = -1
                         QmlBridge.openFile(model.filePath)
                     }
                     drawer.close()
@@ -303,7 +314,9 @@ Item {
                         titleLabel.text = model.fileName
                         currentlySelectedFilePath = model.filePath
                         currentlySelectedFileName = model.fileName
-                        logger.text += "\r\n" + "img source " + model.filePath  + "/" + model.fileName
+                        console.log("select file name " + currentlySelectedFileName)
+                        imageTitleLabel.text = "Editing Image: " + model.fileName
+                        // logger.text += "\r\n" + "img source " + model.filePath  + "/" + model.fileName
                         // QmlBridge.openFile(model.filePath)
                         img.source = "file:///" + model.filePath + "/" + model.fileName
                         myCanvas.requestPaint()
@@ -321,7 +334,7 @@ Item {
     ScrollView {
             anchors.left: parent.left
             anchors.top: subToolBar.bottom
-            anchors.bottom: logger.top
+            anchors.bottom: parent.bottom//logger.top
             anchors.right: parent.right
             clip: true
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
@@ -357,7 +370,7 @@ Item {
                         var ctx = getContext("2d");
                         ctx.reset();
                         myCanvas.requestPaint();
-                        logger.text += "\r\n" + "painting: " + painting
+                        // logger.text += "\r\n" + "painting: " + painting
                     }
                     // onPaint: {
                     //     var ctx = getContext('2d');
@@ -419,27 +432,27 @@ Item {
             //     //process complete
             //     progressIndicator.visible = false
             // }
-            logger.text += "\r\n" + p
+            // logger.text += "\r\n" + p
             img.source = "file://" + p
             myCanvas.requestPaint()
             flickableCanvas.contentWidth = img.width
             flickableCanvas.contentHeight = img.height
         }
         onSendMessage: {
-            logger.text +="\r\n" + data
+            // logger.text +="\r\n" + data
         }
     }
-    ScrollView {
-        id: loggerView
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.top: subToolBar.bottom
-        anchors.bottom: parent.bottom   
-        // height: 200
-        TextArea {
-            id: logger
-            text: "logging area"
-        }
-    }
+    // ScrollView {
+    //     id: loggerView
+    //     anchors.left: parent.left
+    //     anchors.right: parent.right
+    //     anchors.top: subToolBar.bottom
+    //     anchors.bottom: parent.bottom   
+    //     // height: 200
+    //     TextArea {
+    //         id: logger
+    //         text: "logging area"
+    //     }
+    // }
     
 }
