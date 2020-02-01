@@ -24,6 +24,10 @@ In short this tool allowed me to make my own training datasets based off PDFs so
 
 **Note**, if you know that the feature you want to remove is going to be in the same place on multiple PDF pages, the painting 'effect' will stay there until you hit reset. This means that you can load each of the pages with the same feature, one after another, after you have painted over the feature the first and just hit save on all consecutive pages with that feature. This significantly sped up creating the training sets I needed.
 
+## Download
+
+There is a pre-release binary available for OSX that should just work [that can be downloaded here](https://github.com/amlwwalker/pdf-editor/releases/tag/0.1)
+
 ## Demo
 
 A short demo of using the application on a sample pdf document. In the animation below you can see that the app is able to extract text from the PDF. This can be useful if there is text recognition to do on the images/pdfs.
