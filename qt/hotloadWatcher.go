@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/radovskyb/watcher"
 	"log"
 	"path/filepath"
 	"time"
+
+	"github.com/radovskyb/watcher"
 )
 
 type HotLoader struct {
@@ -48,9 +49,6 @@ func (h *HotLoader) startWatcher(loader func(string)) {
 	// If SetMaxEvents is not set, the default is to send all events.
 	w.SetMaxEvents(1)
 
-	// Only notify rename and move events.
-	// w.FilterOps(watcher.Rename, watcher.Move)
-
 	go func() {
 		for {
 			select {
@@ -72,23 +70,6 @@ func (h *HotLoader) startWatcher(loader func(string)) {
 	if err := w.AddRecursive("."); err != nil {
 		log.Fatalln(err)
 	}
-
-	// Print a list of all of the files and folders currently
-	// being watched and their paths.
-	// for path, f := range w.WatchedFiles() {
-	// 	if !h.checkBlacklist(f.Name()) {
-	// 		fmt.Printf("%s: %s\n", path, f.Name())
-	// 	}
-	// }
-
-	fmt.Println()
-
-	// Trigger 2 events after watcher started.
-	// go func() {
-	// 	w.Wait()
-	// 	w.TriggerEvent(watcher.Create, nil)
-	// 	w.TriggerEvent(watcher.Remove, nil)
-	// }()
 
 	// Start the watching process - it'll check for changes every 100ms.
 	if err := w.Start(time.Millisecond * 100); err != nil {

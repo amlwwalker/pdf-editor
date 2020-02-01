@@ -32,10 +32,6 @@ type File struct {
 	_ string `property:"fileSource"`
 }
 
-func init() {
-	Person_QRegisterMetaType()
-}
-
 func (m *FileModel) init() {
 	m.SetRoles(map[int]*core.QByteArray{
 		FilePath:   core.NewQByteArray2("filePath", len("filePath")),
@@ -70,19 +66,19 @@ func (m *FileModel) data(index *core.QModelIndex, role int) *core.QVariant {
 	switch role {
 	case FilePath:
 		{
-			return core.NewQVariant14(f.FilePath())
+			return core.NewQVariant1(f.FilePath())
 		}
 	case FileName:
 		{
-			return core.NewQVariant14(f.FileName())
+			return core.NewQVariant1(f.FileName())
 		}
 	case FileSize:
 		{
-			return core.NewQVariant14(f.FileSize())
+			return core.NewQVariant1(f.FileSize())
 		}
 	case FileSource:
 		{
-			return core.NewQVariant14(f.FileSource())
+			return core.NewQVariant1(f.FileSource())
 		}
 
 	default:

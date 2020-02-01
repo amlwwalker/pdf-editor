@@ -16,9 +16,7 @@ moc*.*
 rcc*.*
 
 #packr files
-*-packr.go
 *cgo*
 
 #binary files
-./got-qt
-./cuiinterface/cuiinterface
+./qt/deploy/*

@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+//I lifted this straight out of a different application I have worked on. Hacking/Lazy I know, but not all fields are necessary.
 type File struct {
 	FileNameEnc string `json:"name"` // base64 encoded.
 	FileName    string `json:"-"`
@@ -34,7 +35,6 @@ func WriteToFile(data []byte, pathToFile string) error {
 }
 
 func StoreFileFromDownload(f File, path string) error {
-	// WriteToFile(f.Content, path + f.Name) // permissions...
 	err := ioutil.WriteFile(path+f.FileName, f.Content, 0755)
 	return err
 }
@@ -60,6 +60,3 @@ func StripFilePathBase(pathToFile string) string {
 	return strings.Replace(pathToFile, "file://", "", -1)
 }
 
-// ============================================================================================================================
-
-// EOF
