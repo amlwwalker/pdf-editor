@@ -70,8 +70,6 @@ func main() {
 	//else the thread might beat the context property to setup
 
 	view.RootContext().SetContextProperty("QmlBridge", qmlBridge)
-	// view.RootContext().SetContextProperty("ContactsModel", qmlBridge.business.pModel)
-	// view.RootContext().SetContextProperty("SearchModel", qmlBridge.business.sModel)
 	view.RootContext().SetContextProperty("FilesModel", qmlBridge.business.fModel)
 	view.RootContext().SetContextProperty("ImageFilesModel", qmlBridge.business.iModel)
 
@@ -87,21 +85,15 @@ func main() {
 			qmlBridge.UpdateLoader(relativePath)
 		}
 	}
-	// var notifier NotificationHandler
-	// notifier.Initialise()
 	// //decide whether to enable hotloading (must be disabled for deployment)
 	config.Hotload = false
 	if !config.Hotload {
 		log.Println("compiling qml into binary...")
 		view.SetSource(core.NewQUrl3("qrc:/qml/loader-production.qml", 0))
-		// notifier.Push("Hotloading", "Disabled")
 	} else {
 		view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
 		go qmlBridge.hotLoader.startWatcher(loader)
-		// notifier.Push("Hotloading", "Enabled")
 	}
-	// view.SetSource(core.NewQUrl3(topLevel+"/loader.qml", 0))
-	// notifier.Push("Running", "Smooth")
 	//6. Complete setup, and start the UI
 	view.SetResizeMode(quick.QQuickView__SizeRootObjectToView)
 	view.Show()
